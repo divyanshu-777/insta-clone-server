@@ -20,7 +20,6 @@ Route.get('/users-profile/:id', verifyJwtToken, (req, res) => {
                     }
                    
                     else {
-                       // console.log(user,posts);
                        return res.send({
                             user,
                             posts
@@ -35,5 +34,38 @@ Route.get('/users-profile/:id', verifyJwtToken, (req, res) => {
             })
         })
 })
+
+
+Route.post('/search-users',(req,res)=>{
+    let pattern = new RegExp("^"+req.body.query)
+    if(req.body.query!==""){
+    User.find({Email : {$regex : pattern}})
+    .select("_id Email")
+    .then(user=>{
+        res.json({
+            user
+        })
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+}
+})
+
+Route.get('/all-users',verifyJwtToken,(req,res)=>{
+    User.find({})
+    .select("_id Email Username Profilepic")
+    .then(user=>{
+        res.status(200).json({
+            user
+        })
+    })
+    .catch(err=>{
+        res.json({
+            err
+        })
+    })
+})
+
 
 module.exports = Route;

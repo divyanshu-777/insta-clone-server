@@ -58,19 +58,23 @@ Route.post('/sign-up',
                     });
 
                     const Saveuser = await user.save();
+
                     res.status(200).send({
                         data: Saveuser,
                         message: "user created Successfully",
                         status: "200"
                     });
+
                     transporter.sendMail({
                         to: Saveuser.Email,
                         from: 'divyanshucoolrocks@gmail.com',
                         subject: "Account Created Successfully",
                         html: "<h1> Welcome to Instagram App</h1>"
-                    }).then(res => {
+                    })
+                    .then(res => {
                         console.log("Email send");
-                    }).catch(err => console.log(err))
+                    })
+                    .catch(err => console.log(err))
                 })
             }
         }
@@ -162,34 +166,34 @@ Route.post('/reset-password', (req, res) => {
                     })
                         .catch(err => console.log(err));
                 })
-             .catch(err=>console.log(err));
+                .catch(err => console.log(err));
         }
     })
 })
 
-Route.post('/new-password',(req,res)=>{
-    const { newPass, sentToken} = req.body;
-    User.findOne({ResetToken : sentToken, ExpireToken:{$gt:Date.now()}})
-    .then(user=>{
-        if(!user){
-            return res.status(422).send({
-                message : "Session Expired"
-            })
-        }
-        bcrypt.hash(newPass,10).then(hashedPass=>{
-            user.Password = hashedPass,
-            user.ResetToken =undefined,
-            user.ExpireToken = undefined
-            user.save()
-            .then(saveduser=>{
-                res.json({
-                    message : "Password Updated Successfully"
+Route.post('/new-password', (req, res) => {
+    const { newPass, sentToken } = req.body;
+    User.findOne({ ResetToken: sentToken, ExpireToken: { $gt: Date.now() } })
+        .then(user => {
+            if (!user) {
+                return res.status(422).send({
+                    message: "Session Expired"
                 })
+            }
+            bcrypt.hash(newPass, 10).then(hashedPass => {
+                user.Password = hashedPass,
+                    user.ResetToken = undefined,
+                    user.ExpireToken = undefined
+                user.save()
+                    .then(saveduser => {
+                        res.json({
+                            message: "Password Updated Successfully"
+                        })
+                    })
+                    .catch(err => console.log(err))
             })
-            .catch(err=>console.log(err))
         })
-    })
-    .catch(err=>console.log(err));
+        .catch(err => console.log(err));
 })
 
 module.exports = Route;

@@ -1,11 +1,7 @@
-const joi = require('joi');
 const express = require('express');
-const config = require('config');
 const Post = require('../models/Post');
 const verifyJwtToken = require('../helper/jwt');
 const User = require('../models/User');
-const { verify } = require('jsonwebtoken');
-
 
 const Route = express.Router();
 
